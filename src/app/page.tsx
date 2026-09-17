@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 export const revalidate = 10; // Revalidate this page every 10 seconds for live vote updates
 
 export default async function Home() {
-  const contestants = await prisma.contestant.findMany({
+  const contestants = await prisma.candidate.findMany({
     where: {
       votesCount: { gt: 0 }, // Only show contestants who have at least 1 vote
     },

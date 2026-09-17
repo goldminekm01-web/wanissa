@@ -6,7 +6,7 @@ export default async function CategoryContestantsPage({ params }: { params: { id
   const category = await prisma.category.findUnique({
     where: { id: params.id },
     include: {
-      contestants: {
+      candidates: {
         orderBy: { name: 'asc' }
       }
     }
@@ -26,11 +26,11 @@ export default async function CategoryContestantsPage({ params }: { params: { id
       </h1>
       <p style={{ color: 'var(--text-secondary)', marginBottom: '40px' }}>{category.description}</p>
 
-      {category.contestants.length === 0 ? (
+      {category.candidates.length === 0 ? (
         <p>No contestants found in this category.</p>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
-          {category.contestants.map(contestant => (
+          {category.candidates.map(contestant => (
             <div key={contestant.id} className="glass-panel" style={{ padding: '20px', textAlign: 'center' }}>
               <div style={{ 
                 width: '120px', 

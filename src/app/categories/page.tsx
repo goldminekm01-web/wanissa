@@ -20,7 +20,7 @@ export default async function CategoriesPage() {
         <div style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>No active categories at the moment.</div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-          {categories.map(category => (
+          {categories.map((category: any) => (
             <div key={category.id} className="glass-panel" style={{ padding: '24px', transition: 'transform 0.3s ease' }}>
               <h2 style={{ fontSize: '1.5rem', marginBottom: '10px' }}>{category.name}</h2>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>{category.description}</p>

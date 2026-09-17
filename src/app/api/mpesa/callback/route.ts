@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
@@ -82,7 +84,7 @@ export async function POST(req: Request) {
         });
 
         // 3. Increment Contestant votes
-        await tx.contestant.update({
+        await tx.candidate.update({
           where: { id: voteRequest.candidateId },
           data: { votesCount: { increment: voteRequest.votesRequested } }
         });

@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 async function addCategory(formData: FormData) {
   'use server';
@@ -11,11 +12,12 @@ async function addCategory(formData: FormData) {
       data: { name, description }
     });
     revalidatePath('/admin/categories');
+    redirect('/admin/categories');
   }
 }
 
 export default async function AdminCategories() {
-  const categories = await prisma.category.findMany({
+  const categories: { id: string; name: string; description: string | null; activeFlag: boolean }[] = await prisma.category.findMany({
     orderBy: { name: 'asc' }
   });
 
@@ -42,7 +44,7 @@ export default async function AdminCategories() {
           </tr>
         </thead>
         <tbody>
-          {categories.map(c => (
+          {categories.map((c) => (
             <tr key={c.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <td style={{ padding: '15px 0' }}>{c.name}</td>
               <td>{c.description}</td>

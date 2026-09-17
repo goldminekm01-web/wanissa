@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { NextResponse } from 'next/server';
 import { sendSMS } from '@/lib/sms';
 import { prisma } from '@/lib/prisma';
@@ -34,7 +36,7 @@ export async function POST(req: Request) {
     }
 
     // Verify candidate exists
-    const contestant = await prisma.contestant.findUnique({
+    const contestant = await prisma.candidate.findUnique({
       where: { code: candidateCode }
     });
 

@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { generateCandidateCode } from '@/lib/utils';
 
 async function addContestant(formData: FormData) {
@@ -11,16 +12,17 @@ async function addContestant(formData: FormData) {
   
   if (name && categoryId) {
     const code = generateCandidateCode(name);
-    await prisma.contestant.create({
+    await prisma.candidate.create({
       data: { name, categoryId, bio, imageUrl, code }
     });
     revalidatePath('/admin/contestants');
+    redirect('/admin/contestants');
   }
 }
 
 export default async function AdminContestants() {
-  const categories = await prisma.category.findMany({ orderBy: { name: 'asc' } });
-  const contestants = await prisma.contestant.findMany({
+  const categories: { id: string; name: string }[] = await prisma.category.findMany({ orderBy: { name: 'asc' } });
+  const contestants: { id: string; name: string; code: string; bio: string | null; imageUrl: string | null; votesCount: number; category: { id: string; name: string } }[] = await prisma.candidate.findMany({
     include: { category: true },
     orderBy: { createdAt: 'desc' }
   });
@@ -35,7 +37,7 @@ export default async function AdminContestants() {
           <input name="name" type="text" placeholder="Contestant Name" required style={{ padding: '10px', borderRadius: '5px' }} />
           <select name="categoryId" required style={{ padding: '10px', borderRadius: '5px' }}>
             <option value="">Select Category</option>
-            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
           <textarea name="bio" placeholder="Bio" rows={3} style={{ padding: '10px', borderRadius: '5px' }}></textarea>
           <input name="imageUrl" type="url" placeholder="Image URL (e.g. https://imgur.com/...)" style={{ padding: '10px', borderRadius: '5px' }} />
@@ -54,7 +56,7 @@ export default async function AdminContestants() {
           </tr>
         </thead>
         <tbody>
-          {contestants.map(c => (
+          {contestants.map((c: any) => (
             <tr key={c.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <td style={{ padding: '15px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
                 {c.imageUrl && <img src={c.imageUrl} alt={c.name} style={{ width: '30px', height: '30px', borderRadius: '50%' }} />}

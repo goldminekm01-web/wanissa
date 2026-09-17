@@ -22,7 +22,7 @@ export default async function AdminReports() {
             </tr>
           </thead>
           <tbody>
-            {transactions.map(t => (
+            {transactions.map((t: any) => (
               <tr key={t.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                 <td style={{ padding: '15px 0' }}>{new Date(t.createdAt).toLocaleString()}</td>
                 <td>{t.phone}</td>

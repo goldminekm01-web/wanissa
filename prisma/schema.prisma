@@ -1,12 +1,10 @@
-// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model AdminUser {
@@ -18,42 +16,40 @@ model AdminUser {
   createdAt    DateTime @default(now())
 }
 
-model Category {
-  id          String       @id @default(uuid())
-  name        String
-  description String?
-  startDate   DateTime?
-  endDate     DateTime?
-  activeFlag  Boolean      @default(true)
-  contestants Contestant[]
-}
-
-model Contestant {
-  id          String        @id @default(uuid())
-  categoryId  String
-  name        String
-  code        String        @unique
-  bio         String?
-  imageUrl    String?
-  metadata    String?       // JSON string
-  createdBy   String?
-  votesCount  Int           @default(0)
-  createdAt   DateTime      @default(now())
-  category    Category      @relation(fields: [categoryId], references: [id])
-  voteRequests VoteRequest[]
-}
-
 model VoteRequest {
   id                 String     @id @default(uuid())
   phone              String
   candidateId        String
   votesRequested     Int
   amountExpected     Int
-  status             String     @default("pending") // pending, paid, failed
+  status             String     @default("pending")
   mpesaTransactionId String?    @unique
   createdAt          DateTime   @default(now())
-  contestant         Contestant @relation(fields: [candidateId], references: [id])
 }
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  imageUrl    String?
+  isActive    Boolean  @default(true)
+  activeFlag  Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  candidates  Candidate[]
+}
+
+model Candidate {
+  id          String   @id @default(uuid())
+  name        String
+  code        String   @unique
+  bio         String?
+  imageUrl    String?
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  votesCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
 
 model Transaction {
   id                 String   @id @default(uuid())
@@ -61,14 +57,6 @@ model Transaction {
   mpesaTransactionId String   @unique
   amount             Int
   status             String
-  rawCallback        String   // JSON string
+  rawCallback        String?
   createdAt          DateTime @default(now())
-}
-
-model AuditLog {
-  id        String   @id @default(uuid())
-  action    String
-  userId    String?
-  details   String   // JSON string
-  createdAt DateTime @default(now())
 }

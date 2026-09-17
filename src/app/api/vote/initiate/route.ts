@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { initiateStkPush } from '@/lib/mpesa';
@@ -18,7 +20,7 @@ export async function POST(req: Request) {
     }
 
     // Find contestant by code
-    const contestant = await prisma.contestant.findUnique({
+    const contestant = await prisma.candidate.findUnique({
       where: { code: candidate_code.trim().toUpperCase() },
       include: { category: true },
     });

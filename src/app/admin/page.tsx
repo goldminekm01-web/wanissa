@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma';
 
 export default async function AdminDashboard() {
   const categoriesCount = await prisma.category.count();
-  const contestantsCount = await prisma.contestant.count();
+  const contestantsCount = await prisma.candidate.count();
   const transactionsCount = await prisma.transaction.count({ where: { status: 'success' } });
   const totalRevenueData = await prisma.transaction.aggregate({
     where: { status: 'success' },

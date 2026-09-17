@@ -1,8 +1,20 @@
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+import { redirect } from 'next/navigation';
+
+// Define a type for the children prop
+type Children = React.ReactNode;
+
+export default async function AdminLayout({ children }: { children: Children }) {
+  // Check if admin is authenticated
+  try {
+    const { getAdminSession } = await import('@/lib/admin-auth');
+    const admin = await getAdminSession();
+    
+    if (!admin) {
+      redirect('/admin/login');
+    }
+  } catch (error) {
+    redirect('/admin/login');
+  }
   return (
     <div className="container" style={{ display: 'flex', minHeight: '80vh', padding: '20px 0' }}>
       <aside style={{ width: '250px', borderRight: '1px solid rgba(255,255,255,0.1)', paddingRight: '20px' }}>
