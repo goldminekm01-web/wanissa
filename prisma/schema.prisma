@@ -1,0 +1,74 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+}
+
+model Category {
+  id          String       @id @default(uuid())
+  name        String
+  description String?
+  startDate   DateTime?
+  endDate     DateTime?
+  activeFlag  Boolean      @default(true)
+  contestants Contestant[]
+}
+
+model Contestant {
+  id          String        @id @default(uuid())
+  categoryId  String
+  name        String
+  code        String        @unique
+  bio         String?
+  imageUrl    String?
+  metadata    String?       // JSON string
+  createdBy   String?
+  votesCount  Int           @default(0)
+  createdAt   DateTime      @default(now())
+  category    Category      @relation(fields: [categoryId], references: [id])
+  voteRequests VoteRequest[]
+}
+
+model VoteRequest {
+  id                 String     @id @default(uuid())
+  phone              String
+  candidateId        String
+  votesRequested     Int
+  amountExpected     Int
+  status             String     @default("pending") // pending, paid, failed
+  mpesaTransactionId String?    @unique
+  createdAt          DateTime   @default(now())
+  contestant         Contestant @relation(fields: [candidateId], references: [id])
+}
+
+model Transaction {
+  id                 String   @id @default(uuid())
+  phone              String
+  mpesaTransactionId String   @unique
+  amount             Int
+  status             String
+  rawCallback        String   // JSON string
+  createdAt          DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String
+  userId    String?
+  details   String   // JSON string
+  createdAt DateTime @default(now())
+}
