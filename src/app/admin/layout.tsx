@@ -12,7 +12,7 @@ export default async function AdminLayout({ children }: { children: Children }) 
     if (!admin) {
       redirect('/admin/login');
     }
-  } catch (error) {
+  } catch {
     redirect('/admin/login');
   }
   return (
